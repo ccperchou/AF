@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+body {
+    padding-top: 56px;
+    background-color: #f8f9fa;
+    color: #738291;
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+h1 {
+    font-family: 'Roboto', sans-serif; /* Utiliser une police moderne */
+    font-size: 3em; /* Taille de police plus grande */
+    font-weight: 700; /* Poids de police épais */
+    background: linear-gradient(90deg, #ff8a00, #e52e71); /* Dégradé de couleurs */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Utiliser le dégradé comme couleur de texte */
+    text-align: center; /* Centrer le texte */
+    margin: 20px 0; /* Espacement au-dessus et en dessous */
+    padding: 10px; /* Espacement interne */
+    transition: transform 0.3s ease-in-out; /* Transition pour l'animation */
+}
+
+h1:hover {
+    transform: scale(1.05); /* Agrandir légèrement au survol */
+}
+
+.form-control {
+    border-radius: 0.25rem;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.table {
+    background-color: #ffffff;
+}
+
+.table thead th {
+    background-color: #e9ecef;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+
+.text-center {
+    margin-bottom: 20px;
+}
+.btn.btn-warning {
+    background: linear-gradient(90deg, #ff8a00, #e52e71);
+}
+.btn.btn-primary.float-right{
+    
+    background: linear-gradient(90deg, #e52e71,#ff8a00);
+}
+body.homepage {
+    background-image: url('{{ url_for('static', filename='office-background.jpg') }}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
+}
+
+body.homepage .container {
+    background: rgba(0, 0, 0, 0.6);  /* Assure un bon contraste avec le texte */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+body.homepage h1 {
+    color: #fff;
+}
+
+body.homepage .navbar {
+    background: rgba(0, 0, 0, 0.8);
+}
+.error {
+    border-color: red;
+}
+progress[value]::-webkit-progress-bar {
+    background-color: #eee;
+}
+
+progress[value]::-webkit-progress-value {
+    background-color: blue;
+}
+
+progress[value]::-moz-progress-bar {
+    background-color: blue;
+
+
+
