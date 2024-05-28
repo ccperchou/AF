@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .additional-fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <a class="navbar-brand" href="{{ url_for('home') }}">Futura</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('home') }}">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('add_user') }}">Inscription</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="form-group">
+        
+        <progress class="form-control" id="progress" value="0" max="100"></progress>
+    </div>
+    <div id="page1">
+        <!-- Vos champs de formulaire existants jusqu'au numéro de téléphone ici -->
+
+    <div class="container mt-5">
+        <h1 class="text-center">Inscription</h1>
+        <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
+            
+            <div class="form-group">
+                <label for="first_name">Prénom</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Nom</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Statut</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="">Choisir le statut</option>
+                    <option value="client">Marié(e)</option>
+                    <option value="entreprise">Célibataire</option>
+                    <option value="entreprise">Divorcé(e)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Adresse postale</label>
+                <input type="text" class="form-control" id="address" name="address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="city">Ville</label>
+                <input type="text" class="form-control" id="city" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Numéro de téléphone</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="additional-fields">
+                <div class="form-group">
+                    <label for="dob">Date de naissance</label>
+                    <input type="date" class="form-control" id="dob" name="dob">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Genre</label>
+                    <select class="form-control" id="gender" name="gender">
+                        <option value="">Sélectionner</option>
+                        <option value="male">Homme</option>
+                        <option value="female">Femme</option>
+                        <option value="other">Autre</option>
+                    </select>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
+            
+           
+        </form>
+ 
+
+    <div id="page2" style="display: none;">
+        <div class="form-group">
+            <label for="address">Adresse postale</label>
+            <input type="text" class="form-control" id="address" name="address" required>
+        </div>
+
+        <div class="form-group">
+            <label for="city">Ville</label>
+            <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Numéro de téléphone</label>
+            <input type="text" class="form-control" id="phone" name="phone" required>
+        </div>
+        <div class="additional-fields">
+            <div class="form-group">
+                <label for="dob">Date de naissance</label>
+                <input type="date" class="form-control" id="dob" name="dob">
+            </div>
+        <!-- Ajoutez plus de champs de formulaire ici si nécessaire -->
+        <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précèdent</button>
+        <button type="submit" class="btn btn-primary" id="add-button">Ajouter</button>
+    </div>
+    
+
+        <script>
+            function nextPage() {
+                document.getElementById('page1').style.display = 'none';
+                document.getElementById('page2').style.display = 'block';
+            }
+        
+            function previousPage() {
+                document.getElementById('page1').style.display = 'block';
+                document.getElementById('page2').style.display = 'none';
+                document.getElementById('progress-bar').value = 0;
+            }
+        </script>
+    
+</div>     
+</body>
+</html>
