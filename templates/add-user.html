@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
+<link rel="stylesheet" href="static/style.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    
     <style>
         .additional-fields {
             display: none;
         }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        #progress-bar {
+            color: green; /* For Firefox */
+            background: rgb(188, 190, 188); /* For Chrome, Safari, and Opera */
+        }
+
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-
         <a class="navbar-brand" href="{{ url_for('home') }}">Futura</a>
-
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -32,116 +40,231 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
                 </li>
+
             </ul>
         </div>
     </nav>
 
-    <div class="form-group">
-        
-        <progress class="form-control" id="progress" value="0" max="100"></progress>
-    </div>
-    <div id="page1">
-        <!-- Vos champs de formulaire existants jusqu'au numéro de téléphone ici -->
-
     <div class="container mt-5">
         <h1 class="text-center">Inscription</h1>
+        <progress id="progress-bar" class="form-control" value="0" max="100"></progress>
         <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
-            
-            <div class="form-group">
-                <label for="first_name">Prénom</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" required>
-            </div>
-            <div class="form-group">
-                <label for="last_name">Nom</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input class="form-control" type="email" id="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="status">Statut</label>
-                <select class="form-control" id="status" name="status" required>
-                    <option value="">Choisir le statut</option>
-                    <option value="client">Marié(e)</option>
-                    <option value="entreprise">Célibataire</option>
-                    <option value="entreprise">Divorcé(e)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="address">Adresse postale</label>
-                <input type="text" class="form-control" id="address" name="address" required>
-            </div>
-
-            <div class="form-group">
-                <label for="city">Ville</label>
-                <input type="text" class="form-control" id="city" name="city" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Numéro de téléphone</label>
-                <input type="text" class="form-control" id="phone" name="phone" required>
-            </div>
-            <div class="additional-fields">
-                <div class="form-group">
-                    <label for="dob">Date de naissance</label>
-                    <input type="date" class="form-control" id="dob" name="dob">
+            <div id="page1" class="page active">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" class="form-control" id="prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sexe">Sexe</label>
+                            <select class="form-control" id="sexe" name="sexe" required>
+                                <option value="">Choisir le sexe</option>
+                                <option value="homme">Homme</option>
+                                <option value="femme">Femme</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_naissance">Votre date de naissance</label>
+                            <input type="date" class="form-control" id="date_naissance" name="date_naissance" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="adresse">Adresse</label>
+                            <input type="text" class="form-control" id="adresse" name="adresse" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="code_postal">Code Postal</label>
+                            <input type="text" class="form-control" id="code_postal" name="code_postal" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ville">Ville</label>
+                            <input type="text" class="form-control" id="ville" name="ville" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Adresse mail</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone">Téléphone</label>
+                            <input type="tel" class="form-control" id="telephone" name="telephone" required>
+                        </div>
+                    </div>
                 </div>
+                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>>
+            </div>
+
+            <div id="page2" class="page">
                 <div class="form-group">
-                    <label for="gender">Genre</label>
-                    <select class="form-control" id="gender" name="gender">
-                        <option value="">Sélectionner</option>
-                        <option value="male">Homme</option>
-                        <option value="female">Femme</option>
-                        <option value="other">Autre</option>
+                    <label for="occupation">Occupation</label>
+                    <select class="form-control" id="occupation" name="occupation" required>
+                        <option value="">Choisir l'occupation</option>
+                        <option value="actif">Actif</option>
+                        <option value="apprenti">Apprenti</option>
+                        <option value="etudiant">Etudiant</option>
+                        <option value="alternant">Alternant</option>
+                        <option value="sans_profession">Sans Profession</option>
+                        <option value="femme_homme_foyer">Femme ou homme au foyer</option>
+                        <option value="retraite">Retraité</option>
                     </select>
                 </div>
-            </div>
+
+                <div class="form-group  ">
+                    <label for="study">Niveau d'études</label>
+                    <select class="form-control" id="education" name="education" required>
+                        <option value="">Choisir le niveau d'études</option>
+                        <option value="primaire">Primaire</option>
+                        <option value="college">Collège</option>
+                        <option value="lycee">Lycée</option>
+                        <option value="bac">Bac</option>
+                        <option value="bac+2">Bac+2</option>
+                        <option value="bac+3">Bac+3</option>
+                        <option value="bac+5">Bac+5</option>
+                        <option value="bac+8">Bac+8</option>
+                    </select>
+                </div>
+                <div class="form-group  ">
+                    <label for="salaries">Niveau de salaire</label>
+                    <select class="form-control" id="salary" name="salary" required>
+                        <option value="">Choisir la fourchette</option>
+                        <option value="0">0 à 10 000</option>
+                        <option value="1">10 000  à 20 000</option>
+                        <option value="2">20 000 à 30 000</option>
+                        <option value="3">30 000 à 40 000</option>
+                        <option value="4">40 000 à 50 000</option>
+                        <option value="5">50 000 à 60 000</option>
+                        <option value="6">60 000 à 70 000</option>
+                        
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="enfant">Attendez-vous un enfant?</label>
+                    <select class="form-control" id="enfant" name="enfant" required>
+                        <option value="">Choisir une option</option>
+                        <option value="oui">Oui</option>
+                        <option value="non">Non</option>
+                    </select>
+                </div>
+            <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
             <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
-            
-           
-        </form>
- 
-
-    <div id="page2" style="display: none;">
-        <div class="form-group">
-            <label for="address">Adresse postale</label>
-            <input type="text" class="form-control" id="address" name="address" required>
-        </div>
-
-        <div class="form-group">
-            <label for="city">Ville</label>
-            <input type="text" class="form-control" id="city" name="city" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Numéro de téléphone</label>
-            <input type="text" class="form-control" id="phone" name="phone" required>
-        </div>
-        <div class="additional-fields">
-            <div class="form-group">
-                <label for="dob">Date de naissance</label>
-                <input type="date" class="form-control" id="dob" name="dob">
             </div>
-        <!-- Ajoutez plus de champs de formulaire ici si nécessaire -->
-        <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précèdent</button>
-        <button type="submit" class="btn btn-primary" id="add-button">Ajouter</button>
-    </div>
-    
-
-        <script>
-            function nextPage() {
-                document.getElementById('page1').style.display = 'none';
-                document.getElementById('page2').style.display = 'block';
-            }
+           
         
-            function previousPage() {
-                document.getElementById('page1').style.display = 'block';
-                document.getElementById('page2').style.display = 'none';
-                document.getElementById('progress-bar').value = 0;
+            
+        
+
+            <div id="page3" class="page">
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        
+                        <label for="media">Médias</label>
+                        <select class="form-control" id="media" name="media" multiple required>
+                            <option value="tv">TV</option>
+                            <option value="radio">Radio</option>
+                            <option value="internet">Internet</option>
+                            <option value="newspaper">Newspaper</option>
+                            <option value="magazine">Magazine</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Quelle est la marque de votre télèphone ?</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Lisez-vous des magazines ?</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                
+                
+            </div>
+                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
+                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
+            </div>
+
+
+
+            <div id="page4" class="page">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="cigarette">Fumez-vous ?</label>
+                            <select class="form-control" id="cigarette" name="cigarette">
+                                <option value="Oui">Oui</option>
+                                <option value="Non">Non</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="marquecigarette">Fumez-vous ?</label>
+                            <select class="form-control" id="marquecigarette" name="marquecigarette" multiple required>
+                                <option value="Oui">Malboro</option>
+                                <option value="Non">Winston</option>
+                                <option value="Oui">Camel</option>
+                                <option value="Oui">Gauloise</option>
+                                <option value="Non">Autres</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="frequence">A quelle fréquence? </label>
+                            <select class="form-control" id="frequence" name="frequence">
+                                <option value="Oui">1 à 4 cig/j</option>
+                                <option value="Non">5 à 10 cig/j</option>
+                                <option value="Oui">11 à 20 cig/j</option>
+                                <option value="Oui">21 à 30 cig/j</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sport">Quel(s) sport(s) pratiquez vous?</label>
+                            <input type="text" class="form-control" id="sport" name="sport" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
+                <button type="submit" class="btn btn-primary float-right">Ajouter</button>
+            </div>
+        </form>
+        </form>
+    </div>
+
+    <script>
+        var progressBar = document.getElementById('progress-bar');
+        var currentPage = 1;
+        var totalPages = document.querySelectorAll('.page').length;
+
+        function updateProgressBar() {
+            var progress = Math.floor((currentPage - 1) / (totalPages - 1) * 100);
+            progressBar.value = progress;
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                document.getElementById('page' + currentPage).classList.remove('active');
+                currentPage++;
+                document.getElementById('page' + currentPage).classList.add('active');
+                updateProgressBar();
             }
-        </script>
-    
-</div>     
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                document.getElementById('page' + currentPage).classList.remove('active');
+                currentPage--;
+                document.getElementById('page' + currentPage).classList.add('active');
+                updateProgressBar();
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

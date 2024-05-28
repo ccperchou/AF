@@ -12,6 +12,28 @@ body {
     font-size: 1.5em;
 }
 
+#progress-bar:indeterminate {
+    color: green; /* For Firefox */
+    background: green; /* For Chrome, Safari, and Opera */
+}
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+.image-wrapper {
+    max-width: 100%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 h1 {
     font-family: 'Roboto', sans-serif; /* Utiliser une police moderne */
     font-size: 3em; /* Taille de police plus grande */
