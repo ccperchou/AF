@@ -48,21 +48,23 @@
     <div class="container mt-5">
         <h1 class="text-center">Inscription</h1>
         <progress id="progress-bar" class="form-control" value="0" max="100"></progress>
+
+        
         <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
             <div id="page1" class="page active">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="nom">Nom</label>
-                            <input type="text" class="form-control" id="nom" name="nom" required>
+                            <input type="text" class="form-control" id="last_name" name="last_name" required>
                         </div>
                         <div class="form-group">
                             <label for="prenom">Prénom</label>
-                            <input type="text" class="form-control" id="prenom" name="prenom" required>
+                            <input type="text" class="form-control" id="first_name" name="first_name" required>
                         </div>
                         <div class="form-group">
                             <label for="sexe">Sexe</label>
-                            <select class="form-control" id="sexe" name="sexe" required>
+                            <select class="form-control" id="gender" name="gender" required>
                                 <option value="">Choisir le sexe</option>
                                 <option value="homme">Homme</option>
                                 <option value="femme">Femme</option>
@@ -70,21 +72,21 @@
                         </div>
                         <div class="form-group">
                             <label for="date_naissance">Votre date de naissance</label>
-                            <input type="date" class="form-control" id="date_naissance" name="date_naissance" required>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="adresse">Adresse</label>
-                            <input type="text" class="form-control" id="adresse" name="adresse" required>
+                            <input type="text" class="form-control" id="address" name="address" required>
                         </div>
                         <div class="form-group">
                             <label for="code_postal">Code Postal</label>
-                            <input type="text" class="form-control" id="code_postal" name="code_postal" required>
+                            <input type="text" class="form-control" id="postal_code" name="postal_code" required>
                         </div>
                         <div class="form-group">
                             <label for="ville">Ville</label>
-                            <input type="text" class="form-control" id="ville" name="ville" required>
+                            <input type="text" class="form-control" id="city" name="city" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Adresse mail</label>
@@ -92,7 +94,7 @@
                         </div>
                         <div class="form-group">
                             <label for="telephone">Téléphone</label>
-                            <input type="tel" class="form-control" id="telephone" name="telephone" required>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
                         </div>
                     </div>
                 </div>
@@ -100,6 +102,10 @@
             </div>
 
             <div id="page2" class="page">
+                <div class="form-group">
+                    <label for="telephone">status</label>
+                    <input type="tel" class="form-control" id="status" name="status" required>
+                </div>
                 <div class="form-group">
                     <label for="occupation">Occupation</label>
                     <select class="form-control" id="occupation" name="occupation" required>
@@ -144,7 +150,7 @@
                 </div>
                 <div class="form-group">
                     <label for="enfant">Attendez-vous un enfant?</label>
-                    <select class="form-control" id="enfant" name="enfant" required>
+                    <select class="form-control" id="expecting_child" name="expecting_child" required>
                         <option value="">Choisir une option</option>
                         <option value="oui">Oui</option>
                         <option value="non">Non</option>
@@ -176,11 +182,11 @@
 
                     <div class="form-group">
                         <label for="password">Quelle est la marque de votre télèphone ?</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="phone_brand" name="phone_brand" required>
                     </div>
                     <div class="form-group">
                         <label for="confirm_password">Lisez-vous des magazines ?</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <input type="password" class="form-control" id="reads_magazines" name="reads_magazines" required>
                     </div>
                 
                 
@@ -196,14 +202,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="cigarette">Fumez-vous ?</label>
-                            <select class="form-control" id="cigarette" name="cigarette">
+                            <select class="form-control" id="smokes" name="smokes">
                                 <option value="Oui">Oui</option>
                                 <option value="Non">Non</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="marquecigarette">Fumez-vous ?</label>
-                            <select class="form-control" id="marquecigarette" name="marquecigarette" multiple required>
+                            <select class="form-control" id="cigarette_brand" name="cigarette_brand" multiple required>
                                 <option value="Oui">Malboro</option>
                                 <option value="Non">Winston</option>
                                 <option value="Oui">Camel</option>
@@ -215,7 +221,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="frequence">A quelle fréquence? </label>
-                            <select class="form-control" id="frequence" name="frequence">
+                            <select class="form-control" id="smoking_frequency" name="smoking_frequency">
                                 <option value="Oui">1 à 4 cig/j</option>
                                 <option value="Non">5 à 10 cig/j</option>
                                 <option value="Oui">11 à 20 cig/j</option>
@@ -224,7 +230,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sport">Quel(s) sport(s) pratiquez vous?</label>
-                            <input type="text" class="form-control" id="sport" name="sport" required>
+                            <input type="text" class="form-control" id="sports" name="sports" required>
                         </div>
                     </div>
                 </div>
