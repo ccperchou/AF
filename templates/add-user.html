@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-<link rel="stylesheet" href="static/style.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +19,6 @@
             color: green; /* For Firefox */
             background: rgb(188, 190, 188); /* For Chrome, Safari, and Opera */
         }
-
     </style>
 </head>
 <body>
@@ -40,7 +38,6 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
                 </li>
-
             </ul>
         </div>
     </nav>
@@ -48,7 +45,6 @@
     <div class="container mt-5">
         <h1 class="text-center">Inscription</h1>
         <progress id="progress-bar" class="form-control" value="0" max="100"></progress>
-
         
         <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
             <div id="page1" class="page active">
@@ -98,13 +94,13 @@
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>>
+                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
             </div>
 
             <div id="page2" class="page">
                 <div class="form-group">
-                    <label for="telephone">status</label>
-                    <input type="tel" class="form-control" id="status" name="status" required>
+                    <label for="status">Status</label>
+                    <input type="text" class="form-control" id="status" name="status" required>
                 </div>
                 <div class="form-group">
                     <label for="occupation">Occupation</label>
@@ -119,8 +115,7 @@
                         <option value="retraite">Retraité</option>
                     </select>
                 </div>
-
-                <div class="form-group  ">
+                <div class="form-group">
                     <label for="study">Niveau d'études</label>
                     <select class="form-control" id="education" name="education" required>
                         <option value="">Choisir le niveau d'études</option>
@@ -134,18 +129,17 @@
                         <option value="bac+8">Bac+8</option>
                     </select>
                 </div>
-                <div class="form-group  ">
+                <div class="form-group">
                     <label for="salaries">Niveau de salaire</label>
                     <select class="form-control" id="salary" name="salary" required>
                         <option value="">Choisir la fourchette</option>
                         <option value="0">0 à 10 000</option>
-                        <option value="1">10 000  à 20 000</option>
+                        <option value="1">10 000 à 20 000</option>
                         <option value="2">20 000 à 30 000</option>
                         <option value="3">30 000 à 40 000</option>
                         <option value="4">40 000 à 50 000</option>
                         <option value="5">50 000 à 60 000</option>
                         <option value="6">60 000 à 70 000</option>
-                        
                     </select>
                 </div>
                 <div class="form-group">
@@ -156,19 +150,13 @@
                         <option value="non">Non</option>
                     </select>
                 </div>
-            <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-            <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
+                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
+                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
             </div>
-           
-        
             
-        
-
             <div id="page3" class="page">
-                
                 <div class="col-md-6">
                     <div class="form-group">
-                        
                         <label for="media">Médias</label>
                         <select class="form-control" id="media" name="media" multiple required>
                             <option value="tv">TV</option>
@@ -177,25 +165,19 @@
                             <option value="newspaper">Newspaper</option>
                             <option value="magazine">Magazine</option>
                         </select>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Quelle est la marque de votre télèphone ?</label>
-                        <input type="password" class="form-control" id="phone_brand" name="phone_brand" required>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Lisez-vous des magazines ?</label>
-                        <input type="password" class="form-control" id="reads_magazines" name="reads_magazines" required>
+                        <label for="phone_brand">Quelle est la marque de votre télèphone ?</label>
+                        <input type="text" class="form-control" id="phone_brand" name="phone_brand" required>
                     </div>
-                
-                
-            </div>
+                    <div class="form-group">
+                        <label for="reads_magazines">Lisez-vous des magazines ?</label>
+                        <input type="text" class="form-control" id="reads_magazines" name="reads_magazines" required>
+                    </div>
+                </div>
                 <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
                 <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
             </div>
-
-
 
             <div id="page4" class="page">
                 <div class="row">
@@ -238,7 +220,6 @@
                 <button type="submit" class="btn btn-primary float-right">Ajouter</button>
             </div>
         </form>
-        </form>
     </div>
 
     <script>
@@ -251,12 +232,29 @@
             progressBar.value = progress;
         }
 
+        function validatePage(page) {
+            var inputs = document.querySelectorAll('#page' + page + ' [required]');
+            for (var i = 0; i < inputs.length; i++) {
+                if (!inputs[i].value) {
+                    inputs[i].classList.add('is-invalid');
+                    return false;
+                } else {
+                    inputs[i].classList.remove('is-invalid');
+                }
+            }
+            return true;
+        }
+
         function nextPage() {
-            if (currentPage < totalPages) {
-                document.getElementById('page' + currentPage).classList.remove('active');
-                currentPage++;
-                document.getElementById('page' + currentPage).classList.add('active');
-                updateProgressBar();
+            if (validatePage(currentPage)) {
+                if (currentPage < totalPages) {
+                    document.getElementById('page' + currentPage).classList.remove('active');
+                    currentPage++;
+                    document.getElementById('page' + currentPage).classList.add('active');
+                    updateProgressBar();
+                }
+            } else {
+                alert("Veuillez remplir tous les champs obligatoires.");
             }
         }
 

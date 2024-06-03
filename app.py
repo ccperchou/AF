@@ -131,7 +131,6 @@ def registration_success():
 
 app.route("/check-email", methods=["POST"])
 
-
 def check_email():
 
     email = request.json["email"]
