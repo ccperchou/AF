@@ -129,10 +129,8 @@ def registration_success():
     )
 
 
-app.route("/check-email", methods=["POST"])
-
+@app.route("/check-email", methods=["POST"])
 def check_email():
-
     email = request.json["email"]
     user = User.query.filter_by(email=email).first()
     if user:

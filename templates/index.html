@@ -1,22 +1,59 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Page d'acceuil</title>
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            .additional-fields {
-                display: none;
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'accueil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand img {
+            width: 75px;
+        }
+        .navbar-nav .nav-link {
+            font-size: 18px;
+        }
+        .hero {
+            background: url('static/main.png') no-repeat center center/cover;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .hero h1 {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        .hero h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+        }
+        .hero .btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 5px;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
 <body class="homepage">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="{{ url_for('home') }}">
-    <img src="static/logo.png" alt="Logo" style="width: 75px;">
-        
-    </a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -35,23 +72,15 @@
             </ul>
         </div>
     </nav>
-    <div class="container mt-5">
-        <h1 class="text-center">Bienvenue</h1>
-        <h2 class="text-center">Rejoignez Futura, acteur majeur de l’organisation des études de marché depuis 2023.</h2>
-        <button class="btn btn-warning">
-            <a class="nav-link" href="{{ url_for('add_user') }}">Inscription</a>
-        </button>
-        <button class="btn btn-primary float-right">Cherchez un pannel</button>
+    <div class="hero">
+        <h1>Bienvenue</h1>
+        <h2>Rejoignez Futura, acteur majeur de l’organisation des études de marché depuis 2023.</h2>
+        <a href="{{ url_for('add_user') }}" class="btn btn-warning">Inscription</a>
+        <a href="#" class="btn btn-primary">Cherchez un pannel</a>
     </div>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-9 image-container">
-                <div class="image-wrapper">
-                    <img src="static/main.png" width = '800' alt="Image Description">
-                </div>
-            </div>
-        </div>
-    </div>
+    <footer>
+        &copy; 2024 Futura. Tous droits réservés.
+    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -19,6 +19,22 @@
             color: green; /* For Firefox */
             background: rgb(188, 190, 188); /* For Chrome, Safari, and Opera */
         }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .container {
+            flex: 1;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
     </style>
 </head>
 <body>
@@ -87,6 +103,7 @@
                         <div class="form-group">
                             <label for="email">Adresse mail</label>
                             <input type="email" class="form-control" id="email" name="email" required>
+                            <small id="emailHelp" class="form-text text-muted"></small>
                         </div>
                         <div class="form-group">
                             <label for="telephone">Téléphone</label>
@@ -157,118 +174,95 @@
             <div id="page3" class="page">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="media">Médias</label>
-                        <select class="form-control" id="media" name="media" multiple required>
-                            <option value="tv">TV</option>
-                            <option value="radio">Radio</option>
-                            <option value="internet">Internet</option>
-                            <option value="newspaper">Newspaper</option>
-                            <option value="magazine">Magazine</option>
+                        <label for="media">Media</label>
+                        <input type="text" class="form-control" id="media" name="media" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select class="form-control" id="media_type" name="media_type" required>
+                            <option value="">Choisir le type</option>
+                            <option value="actif">Actif</option>
+                            <option value="apprenti">Apprenti</option>
+                            <option value="etudiant">Etudiant</option>
+                            <option value="alternant">Alternant</option>
+                            <option value="sans_profession">Sans Profession</option>
+                            <option value="femme_homme_foyer">Femme ou homme au foyer</option>
+                            <option value="retraite">Retraité</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="phone_brand">Quelle est la marque de votre télèphone ?</label>
-                        <input type="text" class="form-control" id="phone_brand" name="phone_brand" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="reads_magazines">Lisez-vous des magazines ?</label>
-                        <input type="text" class="form-control" id="reads_magazines" name="reads_magazines" required>
+                        <label for="date">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
                     </div>
                 </div>
                 <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
-            </div>
-
-            <div id="page4" class="page">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="cigarette">Fumez-vous ?</label>
-                            <select class="form-control" id="smokes" name="smokes">
-                                <option value="Oui">Oui</option>
-                                <option value="Non">Non</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="marquecigarette">Fumez-vous ?</label>
-                            <select class="form-control" id="cigarette_brand" name="cigarette_brand" multiple required>
-                                <option value="Oui">Malboro</option>
-                                <option value="Non">Winston</option>
-                                <option value="Oui">Camel</option>
-                                <option value="Oui">Gauloise</option>
-                                <option value="Non">Autres</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="frequence">A quelle fréquence? </label>
-                            <select class="form-control" id="smoking_frequency" name="smoking_frequency">
-                                <option value="Oui">1 à 4 cig/j</option>
-                                <option value="Non">5 à 10 cig/j</option>
-                                <option value="Oui">11 à 20 cig/j</option>
-                                <option value="Oui">21 à 30 cig/j</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="sport">Quel(s) sport(s) pratiquez vous?</label>
-                            <input type="text" class="form-control" id="sports" name="sports" required>
-                        </div>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-                <button type="submit" class="btn btn-primary float-right">Ajouter</button>
+                <button type="submit" class="btn btn-success float-right">S'inscrire</button>
             </div>
         </form>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        var progressBar = document.getElementById('progress-bar');
-        var currentPage = 1;
-        var totalPages = document.querySelectorAll('.page').length;
-
-        function updateProgressBar() {
-            var progress = Math.floor((currentPage - 1) / (totalPages - 1) * 100);
-            progressBar.value = progress;
-        }
-
-        function validatePage(page) {
-            var inputs = document.querySelectorAll('#page' + page + ' [required]');
-            for (var i = 0; i < inputs.length; i++) {
-                if (!inputs[i].value) {
-                    inputs[i].classList.add('is-invalid');
-                    return false;
-                } else {
-                    inputs[i].classList.remove('is-invalid');
-                }
-            }
-            return true;
-        }
+        let emailValid = false;  // Variable to track email validation
 
         function nextPage() {
-            if (validatePage(currentPage)) {
-                if (currentPage < totalPages) {
-                    document.getElementById('page' + currentPage).classList.remove('active');
-                    currentPage++;
-                    document.getElementById('page' + currentPage).classList.add('active');
-                    updateProgressBar();
-                }
-            } else {
-                alert("Veuillez remplir tous les champs obligatoires.");
+            
+            let currentPage = $('.page.active');
+            if (currentPage.attr('id') === 'page1' && !emailValid) {
+                alert('Veuillez utiliser un email unique avant de continuer.');
+                return;
             }
+            let nextPage = currentPage.next('.page');
+            if (nextPage.length) {
+                currentPage.removeClass('active');
+                nextPage.addClass('active');
+            }
+            updateProgressBar();
         }
 
         function previousPage() {
-            if (currentPage > 1) {
-                document.getElementById('page' + currentPage).classList.remove('active');
-                currentPage--;
-                document.getElementById('page' + currentPage).classList.add('active');
-                updateProgressBar();
+            let currentPage = $('.page.active');
+            let prevPage = currentPage.prev('.page');
+            if (prevPage.length) {
+                currentPage.removeClass('active');
+                prevPage.addClass('active');
             }
+            updateProgressBar();
         }
+
+        function updateProgressBar() {
+            let totalPages = $('.page').length;
+            let currentPage = $('.page.active').index() + 1;
+            let progress = (currentPage / totalPages) * 100;
+            $('#progress-bar').val(progress);
+        }
+
+        $(document).ready(function() {
+            $('#email').on('blur', function() {
+                let email = $(this).val();
+                if (email) {
+                    $.ajax({
+                        url: '/check-email',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({email: email}),
+                        success: function(response) {
+                            if (response.exists) {
+                                $('#emailHelp').text('Cet email est déjà utilisé').css('color', 'red');
+                                emailValid = false;
+                            } else {
+                                $('#emailHelp').text('Cet email est disponible').css('color', 'green');
+                                emailValid = true;
+                            }
+                        }
+                    });
+                }
+            });
+        });
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <footer>
+        &copy; 2024 Futura. Tous droits réservés.
+    </footer>
 </body>
 </html>
