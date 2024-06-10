@@ -53,8 +53,8 @@
     </style>
 </head>
 <body class="homepage">
-    <nav class="navbar navbar-expand-lg navbar-dark">
-
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('home') }}">Futura</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -67,6 +67,9 @@
                     <a class="nav-link" href="{{ url_for('add_user') }}">Inscription</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('pannel_research') }}">Recherche Pannel</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
                 </li>
             </ul>
@@ -76,7 +79,7 @@
         <h1>Bienvenue</h1>
         <h2>Rejoignez Futura, acteur majeur de l’organisation des études de marché depuis 2023.</h2>
         <a href="{{ url_for('add_user') }}" class="btn btn-warning">Inscription</a>
-        <a href="#" class="btn btn-primary">Cherchez un pannel</a>
+        <a href="{{ url_for('pannel_research') }}" class="btn btn-primary">Cherchez un pannel</a>
     </div>
     <footer>
         &copy; 2024 Futura. Tous droits réservés.
