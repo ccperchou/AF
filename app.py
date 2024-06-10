@@ -104,6 +104,11 @@ def admin():
     return render_template("admin.html", users=users)
 
 
+@app.route("/pannel_research", methods=["GET", "POST"])
+def pannel_research():
+    return render_template("pannel_research.html")
+
+
 @app.route("/delete-user/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
