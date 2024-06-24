@@ -1,4 +1,4 @@
-Local Run 
+Local Run
 
 -> python3 app.py
 
