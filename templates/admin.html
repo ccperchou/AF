@@ -6,30 +6,25 @@
     <title>Gestion Admin</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .table-container {
-            margin: 20px auto;
-            overflow-x: auto;
+        .additional-fields {
+            display: none;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .page {
+            display: none;
         }
-        th, td {
-            padding: 8px;
-            text-align: left;
+        .page.active {
+            display: block;
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+        #progress-bar {
+            color: green; /* For Firefox */
+            background: rgb(188, 190, 188); /* For Chrome, Safari, and Opera */
         }
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-
+        
         .container {
             flex: 1;
         }
@@ -43,32 +38,12 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('home') }}">Futura</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('home') }}">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_user') }}">Inscription</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('pannel_research') }}">Recherche Pannel</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <div class="container mt-5">
         <h1 class="text-center">Gestion des utilisateurs</h1>
 
+        <!-- Tableau pour la classe User -->
         <div class="table-container">
             <table class="table table-bordered">
                 <thead class="thead-light">
@@ -121,20 +96,45 @@
                 </tbody>
             </table>
         </div>
-        <div class="pagination">
-            {% if prev_page %}
-            <a href="{{ url_for('admin', page=prev_page) }}" class="btn btn-primary">Précédent</a>
-            {% endif %}
-            {% if next_page %}
-            <a href="{{ url_for('admin', page=next_page) }}" class="btn btn-primary">Suivant</a>
-            {% endif %}
+
+        <!-- Tableau pour la classe Userlogin -->
+        <h2 class="text-center mt-5">Gestion des connexions utilisateur</h2>
+        <div class="table-container">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Statut d'activation</th>
+                        <th>password</th>
+                        <th>Action</th>
+                        <th> Mail</th>
+                    </tr>
+                </thead>
+                <tbody id="userloginTable">
+                    {% for userlogin in userlogins %}
+                    <tr>
+                        <td>{{ userlogin.id }}</td>
+                        <td>{{ userlogin.username }}</td>
+                        <td>{{ "Activé" if userlogin.activate else "Désactivé" }}</td>
+                        
+                        <td>{{ userlogin.password }}</td>
+                        <td>{{ userlogin.email }}</td>
+                            <!-- Ajouter des actions spécifiques pour la gestion des utilisateurs -->
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+
     </div>
+
     <footer>
         &copy; 2024 Futura. Tous droits réservés.
     </footer>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Scripts JavaScript existants ici ... -->
 </body>
 </html>
