@@ -38,28 +38,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('home') }}">Futura</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('home') }}">Accueil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_user') }}">Inscription</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('pannel_research') }}">Recherche Pannel</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin') }}">Gestion Admin</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
 
     <div class="container mt-5">
         <h1 class="text-center">Inscription</h1>
@@ -197,6 +176,16 @@
                         <label for="date">Date</label>
                         <input type="date" class="form-control" id="date" name="date" required>
                     </div>
+                    <div class="form-group">
+                        <label for="username">Pseudo</label>
+                        <input type="username" class="form-control" id="username" name="username" required>
+                        <label for="password">Mot de passe</label>
+                        <input type="text" class="form-control" id="password" name="password" required>
+                    </div>
+
+
+
+
                 </div>
                 <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
                 <button type="submit" class="btn btn-success float-right">S'inscrire</button>
