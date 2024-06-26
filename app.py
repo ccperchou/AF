@@ -115,7 +115,7 @@ def register():
         from_address = "clement.perchais@live.fr"
         to_address = "clement.perchais@live.fr"
         subject = "Sujet de l'email"
-        password = ""
+        password = " "
         print(
             activation_link,
         )
