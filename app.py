@@ -115,7 +115,7 @@ def register():
         from_address = "clement.perchais@live.fr"
         to_address = "clement.perchais@live.fr"
         subject = "Sujet de l'email"
-        password = "arveclgu69"
+        password = " "
         print(
             activation_link,
         )
@@ -244,7 +244,7 @@ def add_user():
         from_address = "clement.perchais@live.fr"
         to_address = request.form["email"]
         subject = "Sujet de l'email"
-        password = ""
+        password = "arveclgu69"
         print(
             activation_link,
         )

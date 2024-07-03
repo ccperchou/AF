@@ -3,134 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription</title>
+    <title>Questionnaire</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .additional-fields {
-            display: none;
+        /* Add your custom styles here */
+        .form-group {
+            margin-bottom: 10px;
         }
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-        }
-        #progress-bar {
-            color: green; /* For Firefox */
-            background: rgb(188, 190, 188); /* For Chrome, Safari, and Opera */
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        
-        .container {
-            flex: 1;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
+        .correct-answer-label {
+            margin-left: 10px;
+            color: green;
         }
     </style>
 </head>
-
 <body>
+    <!-- Navbar -->
     {% include 'navbar.html' %}
 
     <div class="container mt-5">
-        <h1 class="text-center">Inscription</h1>
-        <progress id="progress-bar" class="form-control" value="0" max="100"></progress>
-        
-        <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
-            <div id="page1" class="page active">
-                
-                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
-            </div>
-
-            <div id="page2" class="page">
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <input type="text" class="form-control" id="status" name="status" required>
+        <h2>Créer un formulaire de questions</h2>
+        <form id="question-form">
+            <div id="questions-container">
+                <!-- Existing question will be dynamically added here -->
+                <div class="form-group" id="question1">
+                    <label for="question1">Question 1</label>
+                    <input type="text" class="form-control" id="question1" name="question1" value="Quelle est votre question ?" required>
+                    <button type="button" class="btn btn-sm btn-info ml-2" onclick="editQuestion(1)">Modifier</button>
+                    <div id="answers-container-1">
+                        <!-- Existing answers for Question 1 will be dynamically added here if any -->
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary ml-2" onclick="addAnswerField(1)">Ajouter une réponse</button>
                 </div>
-
-                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-                <button type="button" class="btn btn-primary float-right" onclick="nextPage()">Etape suivante</button>
             </div>
-            
-            <div id="page3" class="page">
- 
-                <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-                <button type="submit" class="btn btn-success float-right">S'inscrire</button>
-            </div>
+            <button type="button" class="btn btn-primary mt-3" onclick="addQuestion()">Ajouter une question</button>
+            <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
         </form>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        let emailValid = false;  // Variable to track email validation
+        let questionCounter = 1; // Start with the existing question
 
-        function nextPage() {
-            
-            let currentPage = $('.page.active');
-            if (currentPage.attr('id') === 'page1' && !emailValid) {
-                alert('Veuillez utiliser un email unique avant de continuer.');
-                return;
-            }
-            let nextPage = currentPage.next('.page');
-            if (nextPage.length) {
-                currentPage.removeClass('active');
-                nextPage.addClass('active');
-            }
-            updateProgressBar();
+        // Function to add a new question input field
+        function addQuestion() {
+            questionCounter++;
+            const container = document.getElementById('questions-container');
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('form-group');
+            questionDiv.id = `question${questionCounter}`;
+            questionDiv.innerHTML = `
+                <label for="question${questionCounter}">Question ${questionCounter}</label>
+                <input type="text" class="form-control" id="question${questionCounter}" name="question${questionCounter}" required>
+                <button type="button" class="btn btn-sm btn-info ml-2" onclick="editQuestion(${questionCounter})">Modifier</button>
+                <div id="answers-container-${questionCounter}">
+                    <button type="button" class="btn btn-sm btn-primary ml-2" onclick="addAnswerField(${questionCounter})">Ajouter une réponse</button>
+                </div>
+            `;
+
+            container.appendChild(questionDiv);
         }
 
-        function previousPage() {
-            let currentPage = $('.page.active');
-            let prevPage = currentPage.prev('.page');
-            if (prevPage.length) {
-                currentPage.removeClass('active');
-                prevPage.addClass('active');
+        // Function to edit an existing question
+        function editQuestion(questionNumber) {
+            const questionInput = document.getElementById(`question${questionNumber}`);
+            const editButton = questionInput.querySelector('button');
+            if (questionInput.disabled) {
+                questionInput.disabled = false;
+                editButton.textContent = 'Enregistrer';
+            } else {
+                questionInput.disabled = true;
+                editButton.textContent = 'Modifier';
             }
-            updateProgressBar();
         }
 
-        function updateProgressBar() {
-            let totalPages = $('.page').length;
-            let currentPage = $('.page.active').index() + 1;
-            let progress = (currentPage / totalPages) * 100;
-            $('#progress-bar').val(progress);
+        // Function to add a new answer input field
+        function addAnswerField(questionNumber) {
+            const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
+
+            const answerCount = answersContainer.children.length + 1;
+
+            const answerDiv = document.createElement('div');
+            answerDiv.classList.add('form-group');
+            answerDiv.innerHTML = `
+                <label for="answer${questionNumber}_${answerCount}">Réponse ${answerCount}</label>
+                <input type="text" class="form-control" id="answer${questionNumber}_${answerCount}" name="answer${questionNumber}_${answerCount}" required>
+                <input type="checkbox" class="form-check-input correct-answer-checkbox" id="correct${questionNumber}_${answerCount}" name="correct${questionNumber}_${answerCount}">
+                <label class="form-check-label correct-answer-label" for="correct${questionNumber}_${answerCount}">(Correcte)</label>
+                <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteAnswer(${questionNumber}, ${answerCount})">Supprimer</button>
+            `;
+
+            answersContainer.appendChild(answerDiv);
         }
 
-        $(document).ready(function() {
-            $('#email').on('blur', function() {
-                let email = $(this).val();
-                if (email) {
-                    $.ajax({
-                        url: '/check-email',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({email: email}),
-                        success: function(response) {
-                            if (response.exists) {
-                                $('#emailHelp').text('Cet email est déjà utilisé').css('color', 'red');
-                                emailValid = false;
-                            } else {
-                                $('#emailHelp').text('Cet email est disponible').css('color', 'green');
-                                emailValid = true;
-                            }
-                        }
-                    });
-                }
+        // Function to delete an answer input field
+        function deleteAnswer(questionNumber, answerCount) {
+            const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
+            const answerDiv = document.getElementById(`answer${questionNumber}_${answerCount}`).parentNode;
+            answersContainer.removeChild(answerDiv);
+
+            // Refresh answer numbers
+            refreshAnswerNumbers(answersContainer, questionNumber);
+        }
+
+        // Function to refresh answer numbers after deletion
+        function refreshAnswerNumbers(container, questionNumber) {
+            const answerDivs = container.querySelectorAll('.form-group');
+            answerDivs.forEach((div, index) => {
+                const label = div.querySelector('label');
+                label.textContent = `Réponse ${index + 1}`;
+                const inputs = div.querySelectorAll('input');
+                inputs.forEach(input => {
+                    if (input.id.startsWith(`answer${questionNumber}_`)) {
+                        const newId = `answer${questionNumber}_${index + 1}`;
+                        input.id = newId;
+                        input.name = newId;
+                    } else if (input.id.startsWith(`correct${questionNumber}_`)) {
+                        const newId = `correct${questionNumber}_${index + 1}`;
+                        input.id = newId;
+                        input.name = newId;
+                    }
+                });
+                const button = div.querySelector('button');
+                button.setAttribute('onclick', `deleteAnswer(${questionNumber}, ${index + 1})`);
             });
+        }
+
+        // Prevent default form submission for this example
+        document.getElementById('question-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Handle form submission logic (e.g., collect data and send to server)
+            const formData = new FormData(this);
+            let formDataObject = {};
+            for (const [key, value] of formData.entries()) {
+                formDataObject[key] = value;
+            }
+            console.log(formDataObject);
         });
     </script>
-    <footer>
-        &copy; 2024 Futura. Tous droits réservés.
-    </footer>
+
+    <!-- Bootstrap JS and jQuery (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

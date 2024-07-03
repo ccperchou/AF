@@ -24,7 +24,6 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        
         .container {
             flex: 1;
         }
@@ -34,6 +33,9 @@
             text-align: center;
             padding: 20px 0;
             margin-top: 50px;
+        }
+        .invalid {
+            border-color: red;
         }
     </style>
 </head>
@@ -178,17 +180,20 @@
                     </div>
                     <div class="form-group">
                         <label for="username">Pseudo</label>
-                        <input type="username" class="form-control" id="username" name="username" required>
-                        <label for="password">Mot de passe</label>
-                        <input type="text" class="form-control" id="password" name="password" required>
+                        <input type="text" class="form-control" id="username" name="username" required>
                     </div>
-
-
-
-
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirmer le mot de passe</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <small id="passwordHelp" class="form-text text-muted"></small>
+                    </div>
                 </div>
                 <button type="button" class="btn btn-secondary float-left" onclick="previousPage()">Précédent</button>
-                <button type="submit" class="btn btn-success float-right">S'inscrire</button>
+                <button type="submit" class="btn btn-success float-right" onclick="validatePasswords()">S'inscrire</button>
             </div>
         </form>
     </div>
@@ -199,10 +204,13 @@
         let emailValid = false;  // Variable to track email validation
 
         function nextPage() {
-            
             let currentPage = $('.page.active');
             if (currentPage.attr('id') === 'page1' && !emailValid) {
                 alert('Veuillez utiliser un email unique avant de continuer.');
+                return;
+            }
+            if (!validatePage(currentPage)) {
+                alert('Veuillez remplir tous les champs obligatoires.');
                 return;
             }
             let nextPage = currentPage.next('.page');
@@ -228,6 +236,30 @@
             let currentPage = $('.page.active').index() + 1;
             let progress = (currentPage / totalPages) * 100;
             $('#progress-bar').val(progress);
+        }
+
+        function validatePage(page) {
+            let isValid = true;
+            page.find('input, select').each(function() {
+                if (!this.checkValidity()) {
+                    isValid = false;
+                    return false;  // Break out of the each loop
+                }
+            });
+            return isValid;
+        }
+
+        function validatePasswords() {
+            let password = $('#password').val();
+            let confirmPassword = $('#confirm_password').val();
+            if (password !== confirmPassword) {
+                $('#confirm_password').addClass('invalid');
+                $('#passwordHelp').text('Les mots de passe ne correspondent pas').css('color', 'red');
+                event.preventDefault();
+            } else {
+                $('#confirm_password').removeClass('invalid');
+                $('#passwordHelp').text('');
+            }
         }
 
         $(document).ready(function() {
