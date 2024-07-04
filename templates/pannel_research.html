@@ -6,13 +6,14 @@
     <title>Questionnaire</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Add your custom styles here */
         .form-group {
             margin-bottom: 10px;
         }
-        .correct-answer-label {
-            margin-left: 10px;
+        .correct-answer {
             color: green;
+        }
+        .incorrect-answer {
+            color: red;
         }
     </style>
 </head>
@@ -24,20 +25,42 @@
         <h2>Créer un formulaire de questions</h2>
         <form id="question-form">
             <div id="questions-container">
-                <!-- Existing question will be dynamically added here -->
                 <div class="form-group" id="question1">
-                    <label for="question1">Question 1</label>
-                    <input type="text" class="form-control" id="question1" name="question1" value="Quelle est votre question ?" required>
-                    <button type="button" class="btn btn-sm btn-info ml-2" onclick="editQuestion(1)">Modifier</button>
-                    <div id="answers-container-1">
+                    <label>Question</label>
+                    <div class="d-flex align-items-center">
+                        <input type="text" class="form-control" name="question1" placeholder="Quelle est votre question ?" required>
+                        <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteQuestion(1)">Supprimer</button>
+                    </div>
+                    <div id="answers-container-1" class="mt-2">
                         <!-- Existing answers for Question 1 will be dynamically added here if any -->
                     </div>
-                    <button type="button" class="btn btn-sm btn-primary ml-2" onclick="addAnswerField(1)">Ajouter une réponse</button>
+                    <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addAnswerField(1)">Ajouter une réponse</button>
                 </div>
             </div>
             <button type="button" class="btn btn-primary mt-3" onclick="addQuestion()">Ajouter une question</button>
             <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
         </form>
+    </div>
+
+    <!-- Recap Modal -->
+    <div class="modal fade" id="recapModal" tabindex="-1" aria-labelledby="recapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recapModalLabel">Récapitulatif</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="recapContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Modifier</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmForm()">Confirmer et envoyer par mail</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -52,43 +75,40 @@
             questionDiv.classList.add('form-group');
             questionDiv.id = `question${questionCounter}`;
             questionDiv.innerHTML = `
-                <label for="question${questionCounter}">Question ${questionCounter}</label>
-                <input type="text" class="form-control" id="question${questionCounter}" name="question${questionCounter}" required>
-                <button type="button" class="btn btn-sm btn-info ml-2" onclick="editQuestion(${questionCounter})">Modifier</button>
-                <div id="answers-container-${questionCounter}">
-                    <button type="button" class="btn btn-sm btn-primary ml-2" onclick="addAnswerField(${questionCounter})">Ajouter une réponse</button>
+                <label>Question</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" class="form-control" name="question${questionCounter}" required>
+                    <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteQuestion(${questionCounter})">Supprimer</button>
                 </div>
+                <div id="answers-container-${questionCounter}" class="mt-2"></div>
+                <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addAnswerField(${questionCounter})">Ajouter une réponse</button>
             `;
 
             container.appendChild(questionDiv);
         }
 
-        // Function to edit an existing question
-        function editQuestion(questionNumber) {
-            const questionInput = document.getElementById(`question${questionNumber}`);
-            const editButton = questionInput.querySelector('button');
-            if (questionInput.disabled) {
-                questionInput.disabled = false;
-                editButton.textContent = 'Enregistrer';
-            } else {
-                questionInput.disabled = true;
-                editButton.textContent = 'Modifier';
-            }
+        // Function to delete a question
+        function deleteQuestion(questionNumber) {
+            const questionDiv = document.getElementById(`question${questionNumber}`);
+            questionDiv.parentElement.removeChild(questionDiv);
+            refreshQuestionNumbers();
         }
 
         // Function to add a new answer input field
         function addAnswerField(questionNumber) {
             const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
 
-            const answerCount = answersContainer.children.length + 1;
+            const answerCount = answersContainer.querySelectorAll('.form-group').length + 1;
 
             const answerDiv = document.createElement('div');
-            answerDiv.classList.add('form-group');
+            answerDiv.classList.add('form-group', 'd-flex', 'align-items-center');
             answerDiv.innerHTML = `
-                <label for="answer${questionNumber}_${answerCount}">Réponse ${answerCount}</label>
-                <input type="text" class="form-control" id="answer${questionNumber}_${answerCount}" name="answer${questionNumber}_${answerCount}" required>
-                <input type="checkbox" class="form-check-input correct-answer-checkbox" id="correct${questionNumber}_${answerCount}" name="correct${questionNumber}_${answerCount}">
-                <label class="form-check-label correct-answer-label" for="correct${questionNumber}_${answerCount}">(Correcte)</label>
+                <label>Réponse</label>
+                <input type="text" class="form-control ml-2" name="answer${questionNumber}_${answerCount}" required>
+                <select class="form-control ml-2" name="correct${questionNumber}_${answerCount}">
+                    <option value="false">Réponse Fausse</option>
+                    <option value="true">Réponse Correcte</option>
+                </select>
                 <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteAnswer(${questionNumber}, ${answerCount})">Supprimer</button>
             `;
 
@@ -98,7 +118,7 @@
         // Function to delete an answer input field
         function deleteAnswer(questionNumber, answerCount) {
             const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
-            const answerDiv = document.getElementById(`answer${questionNumber}_${answerCount}`).parentNode;
+            const answerDiv = answersContainer.querySelector(`[name="answer${questionNumber}_${answerCount}"]`).parentElement;
             answersContainer.removeChild(answerDiv);
 
             // Refresh answer numbers
@@ -110,17 +130,15 @@
             const answerDivs = container.querySelectorAll('.form-group');
             answerDivs.forEach((div, index) => {
                 const label = div.querySelector('label');
-                label.textContent = `Réponse ${index + 1}`;
-                const inputs = div.querySelectorAll('input');
+                label.textContent = `Réponse`;
+                const inputs = div.querySelectorAll('input, select');
                 inputs.forEach(input => {
-                    if (input.id.startsWith(`answer${questionNumber}_`)) {
-                        const newId = `answer${questionNumber}_${index + 1}`;
-                        input.id = newId;
-                        input.name = newId;
-                    } else if (input.id.startsWith(`correct${questionNumber}_`)) {
-                        const newId = `correct${questionNumber}_${index + 1}`;
-                        input.id = newId;
-                        input.name = newId;
+                    if (input.name.startsWith(`answer${questionNumber}_`)) {
+                        const newName = `answer${questionNumber}_${index + 1}`;
+                        input.name = newName;
+                    } else if (input.name.startsWith(`correct${questionNumber}_`)) {
+                        const newName = `correct${questionNumber}_${index + 1}`;
+                        input.name = newName;
                     }
                 });
                 const button = div.querySelector('button');
@@ -128,17 +146,76 @@
             });
         }
 
-        // Prevent default form submission for this example
+        // Function to refresh question numbers after deletion
+        function refreshQuestionNumbers() {
+            const questionDivs = document.querySelectorAll('#questions-container .form-group');
+            questionCounter = questionDivs.length; // update the question counter
+            questionDivs.forEach((div, index) => {
+                const questionNumber = index + 1;
+                const label = div.querySelector('label');
+                label.textContent = `Question`;
+                div.id = `question${questionNumber}`;
+                const input = div.querySelector('input');
+                input.name = `question${questionNumber}`;
+                const deleteButton = div.querySelector('.btn-danger');
+                deleteButton.setAttribute('onclick', `deleteQuestion(${questionNumber})`);
+
+                const answersContainer = div.querySelector(`[id^=answers-container]`);
+                answersContainer.id = `answers-container-${questionNumber}`;
+                refreshAnswerNumbers(answersContainer, questionNumber);
+            });
+        }
+
+        // Function to display recap modal
+        function displayRecap(formDataObject) {
+            const recapContent = document.getElementById('recapContent');
+            recapContent.innerHTML = '';
+
+            Object.keys(formDataObject).forEach((key, index) => {
+                const value = formDataObject[key];
+                if (key.startsWith('question')) {
+                    const questionNumber = key.match(/\d+/)[0];
+                    recapContent.innerHTML += `<h5>Question ${questionNumber}: ${value}</h5>`;
+                    const answers = Object.keys(formDataObject).filter(answerKey => answerKey.startsWith(`answer${questionNumber}_`));
+                    answers.forEach(answerKey => {
+                        const answerNumber = answerKey.match(/\d+_\d+/)[0].split('_')[1];
+                        const isCorrect = formDataObject[`correct${questionNumber}_${answerNumber}`] === 'true';
+                        const answerClass = isCorrect ? 'correct-answer' : 'incorrect-answer';
+                        recapContent.innerHTML += `<p class="${answerClass}">Réponse ${answerNumber}: ${formDataObject[answerKey]}</p>`;
+                    });
+                }
+            });
+
+            $('#recapModal').modal('show');
+        }
+
+        // Function to handle form submission
         document.getElementById('question-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            // Handle form submission logic (e.g., collect data and send to server)
+            // Gather form data
             const formData = new FormData(this);
             let formDataObject = {};
             for (const [key, value] of formData.entries()) {
                 formDataObject[key] = value;
             }
-            console.log(formDataObject);
+            displayRecap(formDataObject);
         });
+
+        // Function to handle confirmation and sending email
+        function confirmForm() {
+            const formData = new FormData(document.getElementById('question-form'));
+            let formDataObject = {};
+            for (const [key, value] of formData.entries()) {
+                formDataObject[key] = value;
+            }
+            console.log(formDataObject); // Replace this with actual email sending logic
+
+            // Hide the modal
+            $('#recapModal').modal('hide');
+
+            // Show a success message or redirect
+            alert('Le formulaire a été confirmé et envoyé par mail.');
+        }
     </script>
 
     <!-- Bootstrap JS and jQuery (if needed) -->
