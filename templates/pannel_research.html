@@ -40,6 +40,11 @@
             <button type="button" class="btn btn-primary mt-3" onclick="addQuestion()">Ajouter une question</button>
             <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
         </form>
+
+        <div class="form-group mt-3">
+            <label for="email">Adresse email pour l'envoi du sondage</label>
+            <input type="email" class="form-control" id="email" placeholder="Entrez l'adresse email" required>
+        </div>
     </div>
 
     <!-- Recap Modal -->
@@ -208,13 +213,31 @@
             for (const [key, value] of formData.entries()) {
                 formDataObject[key] = value;
             }
-            console.log(formDataObject); // Replace this with actual email sending logic
+
+            // Add email to form data object
+            formDataObject.email = document.getElementById('email').value;
+
+            // Send data to backend
+            fetch('/create-survey', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    questions: formDataObject, 
+                    email: formDataObject.email 
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
 
             // Hide the modal
             $('#recapModal').modal('hide');
-
-            // Show a success message or redirect
-            alert('Le formulaire a été confirmé et envoyé par mail.');
         }
     </script>
 
