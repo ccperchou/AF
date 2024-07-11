@@ -5,7 +5,9 @@ from email.mime.base import MIMEBase
 from email import encoders
 
 
-def send_mail(from_adress, to_adress, subject, body, password):
+def send_mail(
+    from_adress: str, to_adress: str, subject: str, body: str, password: str
+) -> int:
     """
     Sends an email using the SMTP protocol.
 
