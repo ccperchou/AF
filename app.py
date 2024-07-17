@@ -9,7 +9,7 @@ from flask import (
     session,
 )
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime  # Import datetime
+from datetime import datetime
 import secrets
 import string
 from mail import send_mail
@@ -20,6 +20,7 @@ db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = "fox"
 
 
+# Modèle User
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
@@ -45,6 +46,7 @@ class User(db.Model):
     sports = db.Column(db.String(100), nullable=True)
 
 
+# Modèle Userlogin
 class Userlogin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -58,6 +60,7 @@ class Userlogin(db.Model):
         return f"<Userlogin {self.username}>"
 
 
+# Fonction pour générer un token d'activation
 def generate_activation_token():
     token = "".join(
         secrets.choice(string.ascii_letters + string.digits) for _ in range(20)
@@ -65,36 +68,70 @@ def generate_activation_token():
     return token
 
 
-# Function to initialize the database with a superadmin user
+# Fonction pour initialiser la base de données
 def initialize_database():
     with app.app_context():
         db.create_all()
-        """
-        # Check if superadmin exists
-        superadmin = Userlogin.query.filter_by(username="superadmin").first()
-        if not superadmin:
-            # Create superadmin user
-            superadmin = Userlogin(
-                id=2, username="superadmin", password="superadmin", activate=True
+
+        # Vérifie si superadmin existe dans les deux tables
+        superadmin_user = User.query.filter_by(email="superadmin@example.com").first()
+        superadmin_login = Userlogin.query.filter_by(username="superadmin").first()
+
+        if not superadmin_user and not superadmin_login:
+            # Crée superadmin dans la table User
+            superadmin_user = User(
+                id=1,
+                first_name="Super",
+                last_name="Admin",
+                gender="homme",
+                birth_date=datetime(1970, 1, 1),
+                address="123 Admin Street",
+                postal_code="00000",
+                city="Admin City",
+                email="superadmin@example.com",
+                phone="0000000000",
+                status="admin",
+                occupation="Administrator",
+                education="N/A",
+                salary="N/A",
+                expecting_child="N/A",
+                media="N/A",
+                phone_brand="N/A",
+                reads_magazines="N/A",
+                smokes="N/A",
+                cigarette_brand="N/A",
+                smoking_frequency="N/A",
+                sports="N/A",
             )
-            db.session.add(superadmin)
+            db.session.add(superadmin_user)
+
+            # Crée superadmin dans la table Userlogin avec le même ID
+            superadmin_login = Userlogin(
+                id=superadmin_user.id,
+                username="superadmin",
+                password="superadmin",
+                mail=superadmin_user.email,
+                activate=True,
+                activation_token=None,
+            )
+            db.session.add(superadmin_login)
             db.session.commit()
 
-            """
 
-
+# Route pour la page d'accueil
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# Route pour l'enregistrement d'un nouvel utilisateur
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         mail = request.form["email"]
-        # Génération et stockage du token de validation
+
         activation_token = generate_activation_token()
 
         new_user = Userlogin(
@@ -106,7 +143,6 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        # Envoi de l'e-mail de validation
         activation_link = url_for(
             "activate_account", token=activation_token, _external=True
         )
@@ -115,10 +151,10 @@ def register():
         from_address = "clement.perchais@live.fr"
         to_address = "clement.perchais@live.fr"
         subject = "Sujet de l'email"
-        password = " "
-        print(
-            activation_link,
-        )
+        body = "Bonjour, voici le corps de votre message."
+        password = "arveclgu69"
+        send_mail(from_address, to_address, subject, body, password)
+
         if send_mail(from_address, to_address, subject, body, password):
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
@@ -133,6 +169,7 @@ def register():
     return render_template("register.html")
 
 
+# Route pour l'activation du compte utilisateur
 @app.route("/activate/<token>")
 def activate_account(token):
     user = Userlogin.query.filter_by(activation_token=token).first()
@@ -147,6 +184,7 @@ def activate_account(token):
     return redirect(url_for("home"))
 
 
+# Route pour la connexion utilisateur
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -168,6 +206,16 @@ def login():
 @app.route("/add-user", methods=["GET", "POST"])
 def add_user():
     if request.method == "POST":
+        email = request.form["email"]
+        existing_user = User.query.filter_by(email=email).first()
+        existing_login = Userlogin.query.filter_by(mail=email).first()
+
+        if existing_user or existing_login:
+            flash(
+                "Un utilisateur avec cet email existe déjà. Veuillez utiliser un email différent."
+            )
+            return redirect(url_for("add_user"))
+
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
         gender = request.form["gender"]
@@ -175,7 +223,6 @@ def add_user():
         address = request.form["address"]
         postal_code = request.form["postal_code"]
         city = request.form["city"]
-        email = request.form["email"]
         phone = request.form["phone"]
         status = request.form.get("status")
         occupation = request.form.get("occupation")
@@ -217,8 +264,6 @@ def add_user():
         db.session.add(new_user)
         db.session.commit()
 
-        # Use the same ID for the Userlogin
-
         # Génération et stockage du token de validation
         activation_token = generate_activation_token()
 
@@ -226,7 +271,7 @@ def add_user():
             id=new_user.id,  # Set the ID to match the User ID
             username=request.form["username"],
             password=request.form["password"],
-            mail=request.form["email"],
+            mail=email,
             activation_token=activation_token,
             activate=False,
         )
@@ -242,13 +287,12 @@ def add_user():
         body = f"Merci de vous inscrire. Cliquez sur ce lien pour activer votre compte : {activation_link}"
 
         from_address = "clement.perchais@live.fr"
-        to_address = request.form["email"]
+        to_address = email
         subject = "Sujet de l'email"
         password = "arveclgu69"
-        print(
-            activation_link,
-        )
-        if send_mail(from_address, to_address, subject, body, password):
+        print(activation_link)
+
+        if send_mail(from_address, to_address, subject, body, password) == 400:
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
             )
@@ -258,27 +302,31 @@ def add_user():
                 "Erreur lors de l'envoi de l'e-mail de validation. Veuillez réessayer."
             )
             return redirect(url_for("register"))
-    return render_template(("add-user.html"))
+    return render_template("add-user.html")
 
 
+# Route pour la page de succès d'ajout d'utilisateur
 @app.route("/add-user-success")
 def add_user_success():
     return render_template("registration_success.html")
 
 
+# Route pour la page d'administration
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     page = request.args.get("page", 1, type=int)
     users = User.query.paginate(page=page, per_page=5)
-    userlogins = Userlogin.query.paginate(page=page, per_page=5)  # Fetch Userlogin data
+    userlogins = Userlogin.query.paginate(page=page, per_page=5)
     return render_template("admin.html", users=users, userlogins=userlogins)
 
 
+# Route pour la page de recherche pannel
 @app.route("/pannel_research", methods=["GET", "POST"])
 def pannel_research():
     return render_template("pannel_research.html")
 
 
+# Route pour supprimer un utilisateur
 @app.route("/delete-user/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -287,11 +335,7 @@ def delete_user(user_id):
     return redirect(url_for("admin"))
 
 
-@app.route("/registration_success")
-def registration_success():
-    return render_template("registration_success.html")
-
-
+# Route pour vérifier si un email existe déjà dans la base de données
 @app.route("/check-email", methods=["POST"])
 def check_email():
     email = request.json["email"]
@@ -302,6 +346,7 @@ def check_email():
         return jsonify({"exists": False})
 
 
+# Route pour se déconnecter
 @app.route("/logout")
 def logout():
     session.pop("username", None)
@@ -309,6 +354,39 @@ def logout():
     return redirect(url_for("home"))
 
 
+@app.route("/send-email", methods=["POST"])
+def send_email():
+    data = request.get_json()
+    if "formData" not in data or "emails" not in data:
+        return jsonify(
+            {"success": False, "error": "Les données du formulaire sont manquantes."}
+        )
+
+    questions = data["formData"]["questions"]
+    emails = data["emails"]
+
+    # Construction du corps de l'e-mail avec les réponses du formulaire
+    body = "Réponses au questionnaire :\n\n"
+    for i, question in enumerate(questions):
+        body += f'Question {i + 1}: {question["question"]}\n'
+        body += "Réponses:\n"
+        for j, answer in enumerate(question["answers"]):
+            body += f"{j + 1}. {answer}\n"
+        body += "\n"
+
+    # Envoi de l'e-mail à chaque destinataire
+    from_address = "clement.perchais@live.fr"
+    subject = "Sujet de l'email"
+    password = "arveclgu69"
+    for email in emails:
+        if not send_mail(from_address, email.strip(), subject, body, password):
+            return jsonify(
+                {"success": False, "error": "Erreur lors de l'envoi de l'e-mail"}
+            )
+
+    return jsonify({"success": True})
+
+
 if __name__ == "__main__":
-    initialize_database()  # Initialize database with superadmin if not already present
+    initialize_database()
     app.run(debug=True)

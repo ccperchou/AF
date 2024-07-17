@@ -37,11 +37,12 @@
             <!-- Utilisation du bouton de type "button" pour empêcher la soumission directe du formulaire -->
             <button type="button" class="btn btn-success mt-3" onclick="displayRecapAndConfirm()">Enregistrer</button>
         </form>
-
+        <h2>Selection d'un ou plusieurs destinataires</h2>
         <div class="form-group mt-3">
-            <label for="email">Adresse email pour l'envoi du sondage</label>
-            <input type="email" class="form-control" id="email" placeholder="Entrez l'adresse email" required>
+            <label for="email">Adresses email pour l'envoi du sondage</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Entrez les adresses email séparées par des virgules" required>
         </div>
+        
 
         <!-- Recap Modal -->
         <div class="modal fade" id="recapModal" tabindex="-1" aria-labelledby="recapModalLabel" aria-hidden="true">

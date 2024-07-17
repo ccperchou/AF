@@ -46,11 +46,11 @@ def send_mail(
         server.quit()
 
 
-""" 
+"""
 from_address = "clement.perchais@live.fr"
 to_address = "clement.perchais@live.fr"
 subject = "Sujet de l'email"
 body = "Bonjour, voici le corps de votre message."
-password = " "
+password = "arveclgu69"
 send_mail(from_address, to_address, subject, body, password)
 """

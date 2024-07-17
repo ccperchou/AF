@@ -148,14 +148,51 @@ function displayRecap(formDataObject) {
 
 // Fonction pour gérer la confirmation d'envoi par email
 function confirmForm() {
-    const email = document.getElementById('email').value;
-    // Ici, vous pouvez ajouter le code pour envoyer les données du formulaire et l'email à votre backend
-    // Par exemple, à l'aide de fetch() pour une requête POST
+    // Récupérer toutes les questions et réponses du formulaire
+    const formData = {
+        questions: []
+    };
+
+    const questions = document.querySelectorAll('[id^="question"]');
+    questions.forEach((questionElement, index) => {
+        const questionText = questionElement.querySelector('input[name^="question"]').value;
+        const answers = [];
+        const answerElements = questionElement.querySelectorAll('input[name^="answer"]');
+        answerElements.forEach(answerElement => {
+            answers.push(answerElement.value);
+        });
+        formData.questions.push({
+            question: questionText,
+            answers: answers
+        });
+    });
+
+    // Récupérer les adresses e-mail du champ d'entrée
+    const emailInput = document.getElementById('email');
+    const emailAddresses = emailInput.value.split(',').map(email => email.trim());
+
+    // Envoyer les données du formulaire à votre backend avec fetch()
+    fetch('/send-email', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ formData: formData, emails: emailAddresses }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte.');
+        } else {
+            alert('Erreur lors de l\'envoi de l\'e-mail de validation. Veuillez réessayer. ' + data.error);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 
     // Après confirmation, vous pouvez cacher la modal si nécessaire
     $('#recapModal').modal('hide');
 }
-
-
 // Appel de la fonction directement pour tester
 // addAnswerField(1); // Décommentez cette ligne pour tester directement depuis la console
