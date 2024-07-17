@@ -6,9 +6,6 @@
     <title>Questionnaire</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .form-group {
-            margin-bottom: 10px;
-        }
         .correct-answer {
             color: green;
         }
@@ -18,7 +15,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     {% include 'navbar.html' %}
 
     <div class="container mt-5">
@@ -38,212 +34,43 @@
                 </div>
             </div>
             <button type="button" class="btn btn-primary mt-3" onclick="addQuestion()">Ajouter une question</button>
-            <button type="submit" class="btn btn-success mt-3">Enregistrer</button>
+            <!-- Utilisation du bouton de type "button" pour empêcher la soumission directe du formulaire -->
+            <button type="button" class="btn btn-success mt-3" onclick="displayRecapAndConfirm()">Enregistrer</button>
         </form>
 
         <div class="form-group mt-3">
             <label for="email">Adresse email pour l'envoi du sondage</label>
             <input type="email" class="form-control" id="email" placeholder="Entrez l'adresse email" required>
         </div>
-    </div>
 
-    <!-- Recap Modal -->
-    <div class="modal fade" id="recapModal" tabindex="-1" aria-labelledby="recapModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="recapModalLabel">Récapitulatif</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="recapContent"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Modifier</button>
-                    <button type="button" class="btn btn-primary" onclick="confirmForm()">Confirmer et envoyer par mail</button>
+        <!-- Recap Modal -->
+        <div class="modal fade" id="recapModal" tabindex="-1" aria-labelledby="recapModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="recapModalLabel">Récapitulatif</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="recapContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Modifier</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmForm()">Confirmer et envoyer par mail</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        let questionCounter = 1; // Start with the existing question
-
-        // Function to add a new question input field
-        function addQuestion() {
-            questionCounter++;
-            const container = document.getElementById('questions-container');
-
-            const questionDiv = document.createElement('div');
-            questionDiv.classList.add('form-group');
-            questionDiv.id = `question${questionCounter}`;
-            questionDiv.innerHTML = `
-                <label>Question</label>
-                <div class="d-flex align-items-center">
-                    <input type="text" class="form-control" name="question${questionCounter}" required>
-                    <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteQuestion(${questionCounter})">Supprimer</button>
-                </div>
-                <div id="answers-container-${questionCounter}" class="mt-2"></div>
-                <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addAnswerField(${questionCounter})">Ajouter une réponse</button>
-            `;
-
-            container.appendChild(questionDiv);
-        }
-
-        // Function to delete a question
-        function deleteQuestion(questionNumber) {
-            const questionDiv = document.getElementById(`question${questionNumber}`);
-            questionDiv.parentElement.removeChild(questionDiv);
-            refreshQuestionNumbers();
-        }
-
-        // Function to add a new answer input field
-        function addAnswerField(questionNumber) {
-            const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
-
-            const answerCount = answersContainer.querySelectorAll('.form-group').length + 1;
-
-            const answerDiv = document.createElement('div');
-            answerDiv.classList.add('form-group', 'd-flex', 'align-items-center');
-            answerDiv.innerHTML = `
-                <label>Réponse</label>
-                <input type="text" class="form-control ml-2" name="answer${questionNumber}_${answerCount}" required>
-                <select class="form-control ml-2" name="correct${questionNumber}_${answerCount}">
-                    <option value="false">Réponse Fausse</option>
-                    <option value="true">Réponse Correcte</option>
-                </select>
-                <button type="button" class="btn btn-sm btn-danger ml-2" onclick="deleteAnswer(${questionNumber}, ${answerCount})">Supprimer</button>
-            `;
-
-            answersContainer.appendChild(answerDiv);
-        }
-
-        // Function to delete an answer input field
-        function deleteAnswer(questionNumber, answerCount) {
-            const answersContainer = document.getElementById(`answers-container-${questionNumber}`);
-            const answerDiv = answersContainer.querySelector(`[name="answer${questionNumber}_${answerCount}"]`).parentElement;
-            answersContainer.removeChild(answerDiv);
-
-            // Refresh answer numbers
-            refreshAnswerNumbers(answersContainer, questionNumber);
-        }
-
-        // Function to refresh answer numbers after deletion
-        function refreshAnswerNumbers(container, questionNumber) {
-            const answerDivs = container.querySelectorAll('.form-group');
-            answerDivs.forEach((div, index) => {
-                const label = div.querySelector('label');
-                label.textContent = `Réponse`;
-                const inputs = div.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    if (input.name.startsWith(`answer${questionNumber}_`)) {
-                        const newName = `answer${questionNumber}_${index + 1}`;
-                        input.name = newName;
-                    } else if (input.name.startsWith(`correct${questionNumber}_`)) {
-                        const newName = `correct${questionNumber}_${index + 1}`;
-                        input.name = newName;
-                    }
-                });
-                const button = div.querySelector('button');
-                button.setAttribute('onclick', `deleteAnswer(${questionNumber}, ${index + 1})`);
-            });
-        }
-
-        // Function to refresh question numbers after deletion
-        function refreshQuestionNumbers() {
-            const questionDivs = document.querySelectorAll('#questions-container .form-group');
-            questionCounter = questionDivs.length; // update the question counter
-            questionDivs.forEach((div, index) => {
-                const questionNumber = index + 1;
-                const label = div.querySelector('label');
-                label.textContent = `Question`;
-                div.id = `question${questionNumber}`;
-                const input = div.querySelector('input');
-                input.name = `question${questionNumber}`;
-                const deleteButton = div.querySelector('.btn-danger');
-                deleteButton.setAttribute('onclick', `deleteQuestion(${questionNumber})`);
-
-                const answersContainer = div.querySelector(`[id^=answers-container]`);
-                answersContainer.id = `answers-container-${questionNumber}`;
-                refreshAnswerNumbers(answersContainer, questionNumber);
-            });
-        }
-
-        // Function to display recap modal
-        function displayRecap(formDataObject) {
-            const recapContent = document.getElementById('recapContent');
-            recapContent.innerHTML = '';
-
-            Object.keys(formDataObject).forEach((key, index) => {
-                const value = formDataObject[key];
-                if (key.startsWith('question')) {
-                    const questionNumber = key.match(/\d+/)[0];
-                    recapContent.innerHTML += `<h5>Question ${questionNumber}: ${value}</h5>`;
-                    const answers = Object.keys(formDataObject).filter(answerKey => answerKey.startsWith(`answer${questionNumber}_`));
-                    answers.forEach(answerKey => {
-                        const answerNumber = answerKey.match(/\d+_\d+/)[0].split('_')[1];
-                        const isCorrect = formDataObject[`correct${questionNumber}_${answerNumber}`] === 'true';
-                        const answerClass = isCorrect ? 'correct-answer' : 'incorrect-answer';
-                        recapContent.innerHTML += `<p class="${answerClass}">Réponse ${answerNumber}: ${formDataObject[answerKey]}</p>`;
-                    });
-                }
-            });
-
-            $('#recapModal').modal('show');
-        }
-
-        // Function to handle form submission
-        document.getElementById('question-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            // Gather form data
-            const formData = new FormData(this);
-            let formDataObject = {};
-            for (const [key, value] of formData.entries()) {
-                formDataObject[key] = value;
-            }
-            displayRecap(formDataObject);
-        });
-
-        // Function to handle confirmation and sending email
-        function confirmForm() {
-            const formData = new FormData(document.getElementById('question-form'));
-            let formDataObject = {};
-            for (const [key, value] of formData.entries()) {
-                formDataObject[key] = value;
-            }
-
-            // Add email to form data object
-            formDataObject.email = document.getElementById('email').value;
-
-            // Send data to backend
-            fetch('/create-survey', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    questions: formDataObject, 
-                    email: formDataObject.email 
-                })
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
-            // Hide the modal
-            $('#recapModal').modal('hide');
-        }
-    </script>
-
     <!-- Bootstrap JS and jQuery (if needed) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Include your app.js -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
 </body>
 </html>
