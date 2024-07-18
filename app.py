@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///user.db"
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = "fox"
+
 mail_password = os.environ.get("MAIL_PASSWORD")
 
 
