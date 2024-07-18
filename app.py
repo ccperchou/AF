@@ -9,15 +9,19 @@ from flask import (
     session,
 )
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import secrets
 import string
 from mail import send_mail
+import os
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///user.db"
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = "fox"
+
+mail_password = os.environ.get("MAIL_PASSWORD")
 
 
 # Modèle User
@@ -52,8 +56,7 @@ class Userlogin(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     mail = db.Column(db.String(200), nullable=False)
-
-    activate = db.Column(db.Boolean, default=True)
+    activate = db.Column(db.Boolean, default=False)
     activation_token = db.Column(db.String(100), unique=True)
 
     def __repr__(self):
@@ -109,7 +112,7 @@ def initialize_database():
             superadmin_login = Userlogin(
                 id=superadmin_user.id,
                 username="superadmin",
-                password="superadmin",
+                password=generate_password_hash("superadmin"),
                 mail=superadmin_user.email,
                 activate=True,
                 activation_token=None,
@@ -136,7 +139,7 @@ def register():
 
         new_user = Userlogin(
             username=username,
-            password=password,
+            password=generate_password_hash(password),
             activation_token=activation_token,
             mail=mail,
         )
@@ -149,13 +152,10 @@ def register():
         body = f"Merci de vous inscrire. Cliquez sur ce lien pour activer votre compte : {activation_link}"
 
         from_address = "clement.perchais@live.fr"
-        to_address = "clement.perchais@live.fr"
-        subject = "Sujet de l'email"
-        body = "Bonjour, voici le corps de votre message."
-        password = "arveclgu69"
-        send_mail(from_address, to_address, subject, body, password)
+        to_address = mail
+        subject = "Activation de votre compte"
 
-        if send_mail(from_address, to_address, subject, body, password):
+        if send_mail(from_address, to_address, subject, body, mail_password):
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
             )
@@ -190,8 +190,8 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        user = Userlogin.query.filter_by(username=username, password=password).first()
-        if user:
+        user = Userlogin.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
             if user.activate:
                 session["username"] = username
                 flash("Login successful!")
@@ -270,7 +270,7 @@ def add_user():
         new_userlogin = Userlogin(
             id=new_user.id,  # Set the ID to match the User ID
             username=request.form["username"],
-            password=request.form["password"],
+            password=generate_password_hash(request.form["password"]),
             mail=email,
             activation_token=activation_token,
             activate=False,
@@ -288,11 +288,9 @@ def add_user():
 
         from_address = "clement.perchais@live.fr"
         to_address = email
-        subject = "Sujet de l'email"
-        password = "arveclgu69"
-        print(activation_link)
+        subject = "Activation de votre compte"
 
-        if send_mail(from_address, to_address, subject, body, password) == 400:
+        if send_mail(from_address, to_address, subject, body, mail_password):
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
             )
@@ -324,6 +322,51 @@ def admin():
 @app.route("/pannel_research", methods=["GET", "POST"])
 def pannel_research():
     return render_template("pannel_research.html")
+
+
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form["email"]
+        user = Userlogin.query.filter_by(mail=email).first()
+        if user:
+            reset_token = generate_activation_token()
+            user.activation_token = reset_token
+            db.session.commit()
+            reset_link = url_for("reset_password", token=reset_token, _external=True)
+            body = f"Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe : {reset_link}"
+            from_address = "clement.perchais@live.fr"
+            to_address = email
+            subject = "Réinitialisation de votre mot de passe"
+            if send_mail(from_address, to_address, subject, body, mail_password):
+                flash("Un email de réinitialisation a été envoyé.")
+            else:
+                flash(
+                    "Erreur lors de l'envoi de l'email de réinitialisation. Veuillez réessayer."
+                )
+        else:
+            flash("Aucun compte associé à cet email.")
+        return redirect(url_for("login"))
+    return render_template("forgot_password.html")
+
+
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    user = Userlogin.query.filter_by(activation_token=token).first()
+    if user:
+        if request.method == "POST":
+            new_password = request.form["password"]
+            user.password = generate_password_hash(new_password)
+            user.activation_token = None
+            db.session.commit()
+            flash(
+                "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter."
+            )
+            return redirect(url_for("login"))
+        return render_template("reset_password.html", token=token)
+    else:
+        flash("Le lien de réinitialisation est invalide ou a expiré.")
+        return redirect(url_for("login"))
 
 
 # Route pour supprimer un utilisateur
@@ -377,9 +420,9 @@ def send_email():
     # Envoi de l'e-mail à chaque destinataire
     from_address = "clement.perchais@live.fr"
     subject = "Sujet de l'email"
-    password = "arveclgu69"
+
     for email in emails:
-        if not send_mail(from_address, email.strip(), subject, body, password):
+        if not send_mail(from_address, email.strip(), subject, body, mail_password):
             return jsonify(
                 {"success": False, "error": "Erreur lors de l'envoi de l'e-mail"}
             )

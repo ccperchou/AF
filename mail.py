@@ -3,6 +3,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import os
+
+mail_password = os.environ.get("MAIL_PASSWORD")
 
 
 def send_mail(
@@ -51,6 +54,6 @@ from_address = "clement.perchais@live.fr"
 to_address = "clement.perchais@live.fr"
 subject = "Sujet de l'email"
 body = "Bonjour, voici le corps de votre message."
-password = "arveclgu69"
-send_mail(from_address, to_address, subject, body, password)
+
+send_mail(from_address, to_address, subject, body, mail_password)
 """

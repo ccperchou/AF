@@ -17,6 +17,10 @@
             border-radius: 10px;
             background-color: #717c87;
         }
+        .extra-options {
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="homepage">
@@ -42,6 +46,10 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
         </form>
+        <div class="extra-options">
+            <a href="{{ url_for('forgot_password') }}">Mot de passe oublié ?</a> | 
+            <a href="{{ url_for('add_user') }}">S'inscrire</a>
+        </div>
     </div>
 
     <!-- Bootstrap JS and dependencies (optional) -->
