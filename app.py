@@ -13,11 +13,13 @@ from datetime import datetime
 import secrets
 import string
 from mail import send_mail
+import os
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///user.db"
 db = SQLAlchemy(app)
 app.config["SECRET_KEY"] = "fox"
+mail_password = os.environ.get("MAIL_PASSWORD")
 
 
 # Modèle User
@@ -152,10 +154,10 @@ def register():
         to_address = "clement.perchais@live.fr"
         subject = "Sujet de l'email"
         body = "Bonjour, voici le corps de votre message."
-        password = "arveclgu69"
-        send_mail(from_address, to_address, subject, body, password)
 
-        if send_mail(from_address, to_address, subject, body, password):
+        send_mail(from_address, to_address, subject, body, mail_password)
+
+        if send_mail(from_address, to_address, subject, body, mail_password):
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
             )
@@ -289,10 +291,10 @@ def add_user():
         from_address = "clement.perchais@live.fr"
         to_address = email
         subject = "Sujet de l'email"
-        password = "arveclgu69"
+
         print(activation_link)
 
-        if send_mail(from_address, to_address, subject, body, password) == 400:
+        if send_mail(from_address, to_address, subject, body, mail_password) == 400:
             flash(
                 "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
             )
@@ -377,9 +379,9 @@ def send_email():
     # Envoi de l'e-mail à chaque destinataire
     from_address = "clement.perchais@live.fr"
     subject = "Sujet de l'email"
-    password = "arveclgu69"
+
     for email in emails:
-        if not send_mail(from_address, email.strip(), subject, body, password):
+        if not send_mail(from_address, email.strip(), subject, body, mail_password):
             return jsonify(
                 {"success": False, "error": "Erreur lors de l'envoi de l'e-mail"}
             )
