@@ -430,6 +430,17 @@ def send_email():
     return jsonify({"success": True})
 
 
+@app.route("/user_info")
+def user_info():
+    if "username" in session:
+        user_login = Userlogin.query.filter_by(username=session["username"]).first()
+        user = User.query.get(user_login.id)
+        if user:
+            return render_template("user_info.html", user=user)
+    flash("Vous devez être connecté pour voir cette page.")
+    return redirect(url_for("login"))
+
+
 if __name__ == "__main__":
     initialize_database()
     app.run(debug=True)
