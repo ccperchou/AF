@@ -490,7 +490,6 @@ def submit():
         db.session.add(new_user)
         db.session.commit()
 
-        # Générer et stocker le jeton d'activation
         activation_token = generate_activation_token()
 
         new_userlogin = Userlogin(
