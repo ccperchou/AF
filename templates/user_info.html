@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'accueil</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand img {
+            width: 75px;
+        }
+        .navbar-nav .nav-link {
+            font-size: 18px;
+        }
+        .hero {
+            background: url('static/main.png') no-repeat center center/cover;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .hero h1 {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        .hero h2 {
+            font-size: 30px;
+            margin-bottom: 40px;
+        }
+        .hero .btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 5px;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        .info-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .info-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .info-label {
+            font-weight: bold;
+            flex: 0 0 30%;
+        }
+        .info-value {
+            flex: 1;
+        }
+        @media (max-width: 768px) {
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .info-label {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body class="homepage">
+    {% include 'navbar.html' %}
+    
+    <div class="info-container">
+        <h2>Informations sur l'utilisateur</h2>
+        <div class="info-item">
+            <span class="info-label">Prénom :</span> <span class="info-value">{{ user.first_name }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Nom :</span> <span class="info-value">{{ user.last_name }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Genre :</span> <span class="info-value">{{ user.gender }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Date de naissance :</span> <span class="info-value">{{ user.birth_date }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Adresse :</span> <span class="info-value">{{ user.address }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Code postal :</span> <span class="info-value">{{ user.postal_code }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Ville :</span> <span class="info-value">{{ user.city }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Email :</span> <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Téléphone :</span> <span class="info-value">{{ user.phone }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Statut :</span> <span class="info-value">{{ user.status }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Occupation :</span> <span class="info-value">{{ user.occupation }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Éducation :</span> <span class="info-value">{{ user.education }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Salaire :</span> <span class="info-value">{{ user.salary }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Enfant attendu :</span> <span class="info-value">{{ user.expecting_child }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Média :</span> <span class="info-value">{{ user.media }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Marque de téléphone :</span> <span class="info-value">{{ user.phone_brand }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Lit des magazines :</span> <span class="info-value">{{ user.reads_magazines }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Fume :</span> <span class="info-value">{{ user.smokes }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Marque de cigarette :</span> <span class="info-value">{{ user.cigarette_brand }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Fréquence de tabagisme :</span> <span class="info-value">{{ user.smoking_frequency }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Sports :</span> <span class="info-value">{{ user.sports }}</span>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 Futura. Tous droits réservés.
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
