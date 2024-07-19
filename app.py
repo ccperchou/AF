@@ -29,25 +29,25 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
-    gender = db.Column(db.String(10), nullable=False)
-    birth_date = db.Column(db.Date, nullable=False)
-    address = db.Column(db.String(200), nullable=False)
-    postal_code = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=False, unique=True)
-    phone = db.Column(db.String(15), nullable=False)
+    gender = db.Column(db.String(10), nullable=True)
+    birth_date = db.Column(db.Date, nullable=True)
+    address = db.Column(db.String(255), nullable=True)
+    postal_code = db.Column(db.String(20), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=True)
     status = db.Column(db.String(50), nullable=True)
-    occupation = db.Column(db.String(50), nullable=True)
-    education = db.Column(db.String(50), nullable=True)
-    salary = db.Column(db.String(50), nullable=True)
-    expecting_child = db.Column(db.String(10), nullable=True)
-    media = db.Column(db.String(100), nullable=True)
+    occupation = db.Column(db.String(100), nullable=True)
+    education = db.Column(db.String(100), nullable=True)
+    salary = db.Column(db.String(100), nullable=True)
+    expecting_child = db.Column(db.String(3), nullable=True)
+    media = db.Column(db.String(255), nullable=True)
     phone_brand = db.Column(db.String(100), nullable=True)
-    reads_magazines = db.Column(db.String(10), nullable=True)
-    smokes = db.Column(db.String(10), nullable=True)
+    reads_magazines = db.Column(db.String(3), nullable=True)
+    smokes = db.Column(db.String(3), nullable=True)
     cigarette_brand = db.Column(db.String(100), nullable=True)
-    smoking_frequency = db.Column(db.String(50), nullable=True)
-    sports = db.Column(db.String(100), nullable=True)
+    smoking_frequency = db.Column(db.String(100), nullable=True)
+    sports = db.Column(db.String(255), nullable=True)
 
 
 # Modèle Userlogin
@@ -439,6 +439,93 @@ def user_info():
             return render_template("user_info.html", user=user)
     flash("Vous devez être connecté pour voir cette page.")
     return redirect(url_for("login"))
+
+
+@app.route("/submit", methods=["GET", "POST"])
+def submit():
+    if request.method == "POST":
+        email = request.form["email"]
+        existing_user = User.query.filter_by(email=email).first()
+        existing_login = Userlogin.query.filter_by(mail=email).first()
+
+        if existing_user or existing_login:
+            flash(
+                "Un utilisateur avec cet email existe déjà. Veuillez utiliser un email différent."
+            )
+            return redirect(url_for("submit"))
+
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        password = request.form.get("password")
+        username = request.form.get(
+            "username", "default_username"
+        )  # Valeur par défaut si absent
+        phone = request.form.get("phone", "N/A")  # Valeur par défaut si absent
+
+        # Créez un nouvel utilisateur avec les valeurs par défaut pour les champs optionnels
+        new_user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            gender="N/A",
+            birth_date=None,
+            address=None,
+            postal_code=None,
+            city=None,
+            phone=phone,
+            status="N/A",
+            occupation="N/A",
+            education="N/A",
+            salary="N/A",
+            expecting_child="N/A",
+            media="N/A",
+            phone_brand="N/A",
+            reads_magazines="N/A",
+            smokes="N/A",
+            cigarette_brand="N/A",
+            smoking_frequency="N/A",
+            sports="N/A",
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        activation_token = generate_activation_token()
+
+        new_userlogin = Userlogin(
+            id=new_user.id,  # Set the ID to match the User ID
+            username=username,
+            password=generate_password_hash(password),
+            mail=email,
+            activation_token=activation_token,
+            activate=False,
+        )
+        db.session.add(new_userlogin)
+        db.session.commit()
+
+        flash("Utilisateur ajouté avec succès!")
+
+        activation_link = url_for(
+            "activate_account", token=activation_token, _external=True
+        )
+        body = f"Merci de vous inscrire. Cliquez sur ce lien pour activer votre compte : {activation_link}"
+
+        from_address = "clement.perchais@live.fr"
+        to_address = email
+        subject = "Activation de votre compte"
+
+        if send_mail(from_address, to_address, subject, body, mail_password):
+            flash(
+                "Un e-mail de validation a été envoyé à votre adresse. Veuillez vérifier pour activer votre compte."
+            )
+            return redirect(url_for("add_user_success"))
+        else:
+            flash(
+                "Erreur lors de l'envoi de l'e-mail de validation. Veuillez réessayer."
+            )
+            return redirect(url_for("submit"))
+
+    return render_template("submit.html")
 
 
 if __name__ == "__main__":
